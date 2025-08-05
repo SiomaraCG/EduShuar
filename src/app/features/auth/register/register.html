@@ -1,0 +1,52 @@
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-shuar-dark-green to-shuar-light-green p-2">
+  <div class="w-full max-w-md p-8 space-y-4 bg-white rounded-xl shadow-2xl">
+    <div class="flex flex-col items-center">
+      <img src="img/logo_editado.png" alt="EduShuar Logo" class="h-28 w-28 rounded-full mb-4 shadow-lg">
+      <h2 class="text-4xl font-extrabold text-shuar-soft-black text-center">Crea tu cuenta</h2>
+      <p class="text-shuar-soft-black text-center mt-3 text-lg">Únete a la comunidad educativa Shuar</p>
+      <p class="italic text-gray-500 text-sm mt-2">Preservando la sabiduría ancestral</p>
+    </div>
+    <form (ngSubmit)="register()" #registerForm="ngForm" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-semibold text-shuar-soft-black mb-1">Correo Electrónico</label>
+        <input type="email" id="email" name="email" [(ngModel)]="email" required 
+               class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out">
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-semibold text-shuar-soft-black mb-1">Contraseña</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" required 
+               class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out">
+      </div>
+      <div>
+        <label for="displayName" class="block text-sm font-semibold text-shuar-soft-black mb-1">Nombre de Usuario</label>
+        <input type="text" id="displayName" name="displayName" [(ngModel)]="displayName" required 
+               class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out">
+      </div>
+      <div>
+        <label for="role" class="block text-sm font-semibold text-shuar-soft-black mb-1">Rol</label>
+        <select id="role" name="role" [(ngModel)]="role" required 
+                class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out bg-white">
+          <option value="">Selecciona un rol</option>
+          <option value="student">Estudiante</option>
+          <option value="teacher">Profesor</option>
+          <option value="elder">Anciano</option>
+          <option value="moderator">Moderador</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+      <button type="submit" 
+              class="w-full px-4 py-3 font-bold text-black bg-shuar-dark-green rounded-lg shadow-md hover:bg-shuar-light-green 
+                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-shuar-dark-green 
+                     transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-102 border border-gray-300 hover:bg-gray-200">
+        Crear Cuenta
+      </button>
+    </form>
+    
+    <p class="text-center text-sm text-shuar-soft-black">
+      ¿Ya tienes una cuenta? 
+      <a routerLink="/login" class="font-bold text-shuar-dark-green hover:underline transition duration-300 ease-in-out hover:text-shuar-medium-green">
+        Iniciar Sesión
+      </a>
+    </p>
+  </div>
+</div>

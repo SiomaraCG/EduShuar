@@ -1,0 +1,72 @@
+<nav class="flex flex-col p-4 bg-shuar-dark-green text-white w-64">
+  <div class="flex items-center mb-8">
+    <img src="img/logo_editado.png" alt="EduShuar Logo" class="h-12 w-auto">
+  </div>
+  <ul>
+    <li class="mb-4">
+      <a routerLink="/dashboard" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green" >
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/dictionary" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-book"></i>
+        <span>Diccionario</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/stories" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-book-open"></i>
+        <span>Cuentos</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/games" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-gamepad"></i>
+        <span>Juegos</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/profile" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-user"></i>
+        @if (userName) {
+          <span>{{ userName }}</span>
+        }
+        @if (!userName) {
+          <span>Perfil</span>
+        }
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/login" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Iniciar Sesión</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/register" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-user-plus"></i>
+        <span>Registrarse</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/biblioteca" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-books"></i>
+        <span>Biblioteca</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/contribuir" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-plus-circle"></i>
+        <span>Contribuir</span>
+      </a>
+    </li>
+    <li class="mb-4">
+      <a routerLink="/lecciones" routerLinkActive="bg-shuar-light-green" class="flex flex-col items-center p-2 rounded-md hover:bg-shuar-light-green">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Lecciones</span>
+      </a>
+    </li>
+  </ul>
+</nav>

@@ -1,0 +1,37 @@
+<header class="bg-shuar-white shadow-md">
+  <div class="container mx-auto flex items-center justify-between p-4">
+    <div class="flex items-center">
+      <img src="img/logo_editado.png" alt="EduShuar Logo" class="h-12 w-auto mr-2">
+      <span class="text-2xl font-bold text-shuar-soft-black">EduShuar</span>
+    </div>
+    <nav class="flex-grow flex justify-center">
+      <ul class="flex space-x-6">
+        <li class="flex flex-col items-center"><a routerLink="/dashboard" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-home text-xl"></i><span>Inicio</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/dictionary" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-book text-xl"></i><span>Diccionario</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/stories" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-book-open text-xl"></i><span>Cuentos</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/lecciones" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-graduation-cap text-xl"></i><span>Lecciones</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/games" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-gamepad text-xl"></i><span>Juegos</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/contribuir" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-hand-holding-heart text-xl"></i><span>Contribuir</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/biblioteca" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-archive text-xl"></i><span>Biblioteca</span></a></li>
+        <li class="flex flex-col items-center"><a routerLink="/profile" routerLinkActive="text-shuar-dark-green font-bold" class="text-shuar-soft-black hover:text-shuar-dark-green"><i class="fas fa-user text-xl"></i><span>Perfil</span></a></li>
+      </ul>
+    </nav>
+    @if (user$ | async; as user) {
+      <div class="relative">
+        <button class="flex items-center focus:outline-none">
+          <span class="text-shuar-soft-black font-semibold mr-2">{{ user.displayName }}</span>
+          <img src="img/avatar.png" alt="User Avatar" class="h-10 w-10 rounded-full mr-2" (click)="toggleDropdown()" >
+          <span class="text-shuar-soft-black font-semibold">ES</span>
+          <i class="fas fa-caret-down ml-1"></i>
+        </button>
+        @if (isDropdownOpen) {
+          <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+            <button (click)="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">Cerrar Sesión</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <a routerLink="/login" class="text-shuar-soft-black hover:text-shuar-dark-green">Iniciar Sesión</a>
+    }
+  </div>
+</header>

@@ -1,0 +1,124 @@
+<div class="relative bg-[#a18252de] text-white py-20 px-8 overflow-hidden">
+  <div class="container mx-auto flex flex-col md:flex-row items-center justify-center relative z-10">
+    <div class="text-center md:text-center md:w-1/2 mb-10 md:mb-0 flex flex-col items-center">
+      <h1 class="text-5xl font-bold leading-tight text-white">Bienvenidos a Shuar Yachay</h1>
+      <p class="mt-4 text-lg max-w-md text-white">Preservando nuestra lengua y cultura ancestral. Explora la riqueza de la cultura Shuar a través de nuestras lecciones interactivas, cuentos tradicionales y juegos educativos. Sumérgete en un viaje de aprendizaje y descubrimiento, y fortalece tu conexión con nuestras raíces.</p>
+      <div class="mt-8 flex justify-center space-x-4">
+        <button routerLink="/lecciones" class="transform transition duration-300 hover:scale-105 bg-yellow-400 bg-shuar-yellow text-shuar-soft-black font-bold py-3 px-6 rounded-full flex items-center shadow-lg hover:bg-yellow-400 transition duration-300">
+          <i class="fas fa-play mr-2"></i>
+          Comenzar
+        </button>
+        <button routerLink="/dictionary" class="transform transition duration-300 hover:scale-105 bg-yellow-400 bg-shuar-yellow text-shuar-soft-black font-bold py-3 px-6 rounded-full flex items-center shadow-lg hover:bg-yellow-400 transition duration-300">
+          <i class="fas fa-search mr-2"></i>
+          Explorar
+        </button>
+      </div>
+    </div>
+    <div class="md:w-1/2 flex justify-center md:justify-center">
+      <img src="img/inicio.jpg" alt="Imagen Cultural Shuar" class="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover shadow-2xl border-4 border-white">
+    </div>
+  </div>
+</div>
+
+<div class="container mx-auto py-16 px-8">
+  <h2 class="text-3xl font-bold text-shuar-soft-black text-center mb-12">Tu Progreso</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="bg-shuar-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
+      <h3 class="text-5xl font-bold text-shuar-dark-green">48</h3>
+      <p class="text-shuar-soft-black mt-2">Palabras Aprendidas</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+        <div class="bg-shuar-light-green h-2.5 rounded-full" style="width: 60%; background-color: #e68924c9;"></div>
+      </div>
+    </div>
+    <div class="bg-shuar-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
+      <h3 class="text-5xl font-bold text-shuar-dark-green">8</h3>
+      <p class="text-shuar-soft-black mt-2">Cuentos Leídos</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+        <div class="bg-shuar-light-green h-2.5 rounded-full" style="width: 80%; background-color: #e68924c9;"></div>
+      </div>
+    </div>
+    <div class="bg-shuar-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
+      <h3 class="text-5xl font-bold text-shuar-dark-green">5</h3>
+      <p class="text-shuar-soft-black mt-2">Lecciones Completadas</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+        <div class="bg-shuar-light-green h-2.5 rounded-full" style="width: 50%; background-color: #e68924c9;"></div>
+      </div>
+    </div>
+    <div class="bg-shuar-white p-6 rounded-lg shadow-md text-center transform transition duration-300 hover:scale-105">
+      <h3 class="text-5xl font-bold text-shuar-dark-green">12</h3>
+      <p class="text-shuar-soft-black mt-2">Juegos Jugados</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+        <div class="bg-shuar-light-green h-2.5 rounded-full" style="width: 75%; background-color: #e68924c9;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mx-auto py-16 px-8">
+  <h2 class="text-3xl font-bold text-shuar-soft-black text-center mb-12">Acceso Rápido</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div routerLink="/dictionary" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-book text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">500+ palabras</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Diccionario Audiovisual</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Explora palabras en Shuar con audio y ejemplos visuales.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 70%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">70% completado</p>
+    </div>
+    <div routerLink="/stories" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-book-open text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">100+ cuentos</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Cuentos Tradicionales</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Sumérgete en narraciones tradicionales y mitos Shuar.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 45%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">45% completado</p>
+    </div>
+    <div routerLink="/lecciones" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-graduation-cap text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">20+ lecciones</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Módulos de Lecciones</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Aprende la lengua Shuar con módulos interactivos.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 85%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">85% completado</p>
+    </div>
+    <div routerLink="/games" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-gamepad text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">15+ juegos</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Juegos Educativos</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Diviértete y pon a prueba tus conocimientos con juegos educativos.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 60%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">60% completado</p>
+    </div>
+    <div routerLink="/contribuir" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-hand-holding-heart text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">5+ contribuciones</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Contribuciones Comunitarias</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Comparte tu conocimiento y enriquece el patrimonio cultural.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 20%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">20% completado</p>
+    </div>
+    <div routerLink="/biblioteca" class="bg-shuar-white p-6 rounded-lg shadow-md cursor-pointer hover:shadow-xl transition duration-300 relative transform hover:scale-105">
+      <i class="fas fa-archive text-shuar-dark-green text-3xl absolute top-4 left-4"></i>
+      <p class="text-right text-sm text-gray-500">200+ recursos</p>
+      <h3 class="text-xl font-bold text-shuar-dark-green mb-2 mt-8">Biblioteca Multimedia</h3>
+      <p class="text-shuar-soft-black text-sm mb-4">Accede a recursos multimedia y documentos históricos.</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5">
+        <div class="h-2.5 rounded-full" style="width: 90%; background-color: #e68924c9;"></div>
+      </div>
+      <p class="text-right text-xs text-gray-500 mt-1">90% completado</p>
+    </div>
+  </div>
+</div>
+
+
+
