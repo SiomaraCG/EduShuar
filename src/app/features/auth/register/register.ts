@@ -1,13 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterModule, CommonModule],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
@@ -16,24 +17,28 @@ export class Register {
   password = '';
   displayName = '';
   role = '';
+  errorMessage = '';
 
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
   private router = inject(Router);
 
   async register() {
+    this.errorMessage = '';
+    if (!this.email || !this.password || !this.displayName || !this.role) {
+      this.errorMessage = 'Todos los campos son obligatorios.';
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
       const user = userCredential.user;
 
-      // Actualizar el perfil del usuario de Firebase Authentication con el displayName
       await updateProfile(user, { displayName: this.displayName });
 
-      // Guardar información adicional del usuario en Firestore 
       await setDoc(doc(this.firestore, "users", user.uid), {
         uid: user.uid,
         email: this.email,
-        password:this.password,
         displayName: this.displayName,
         role: this.role,
         createdAt: new Date(),
@@ -42,7 +47,18 @@ export class Register {
       });
 
       this.router.navigate(['/login']);
-    } catch (error) {
+    } catch (error: any) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          this.errorMessage = 'El correo electrónico ya está en uso.';
+          break;
+        case 'auth/weak-password':
+          this.errorMessage = 'La contraseña es demasiado débil.';
+          break;
+        default:
+          this.errorMessage = 'Ocurrió un error inesperado al registrar el usuario.';
+          break;
+      }
       console.error('Error al registrar usuario:', error);
     }
   }
