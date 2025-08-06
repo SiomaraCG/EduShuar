@@ -6,10 +6,10 @@ import { Stories } from './features/stories/stories';
 import { Games } from './features/games/games';
 import { Profile } from './features/profile/profile';
 import { Lecciones } from './features/lecciones/lecciones';
-import { Contribuir } from './features/contribuir/contribuir';
 import { Biblioteca } from './features/biblioteca/biblioteca';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
+import { ContribuirComponent } from './features/contribuir/contribuir';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -25,7 +25,7 @@ export const routes: Routes = [
       { path: 'games', component: Games },
       { path: 'profile', component: Profile },
       { path: 'lecciones', component: Lecciones },
-      { path: 'contribuir', component: Contribuir },
+      { path: 'contribuir', component:ContribuirComponent  },
       { path: 'biblioteca', component: Biblioteca },
     ]
   }

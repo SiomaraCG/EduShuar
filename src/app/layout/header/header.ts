@@ -16,7 +16,7 @@ export class Header {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  isDropdownOpen = false;
+  public isDropdownOpen = false;
 
   user$ = user(this.auth);
 
@@ -25,7 +25,7 @@ export class Header {
     this.router.navigate(['/login']);
   }
 
-  toggleDropdown() {
+  public toggleDropdown() {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 }

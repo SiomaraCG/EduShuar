@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { Header } from './layout/header/header';
 import { Footer } from './layout/footer/footer';
 
+
 @Component({
   selector: 'app-root',
   standalone: true,
