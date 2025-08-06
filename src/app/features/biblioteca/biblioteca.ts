@@ -3,11 +3,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Firestore, collection, query, where, getDocs, doc, updateDoc, increment } from '@angular/fire/firestore';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { YouTubePlayerModule } from '@angular/youtube-player';
 
 @Component({
   selector: 'app-biblioteca',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, YouTubePlayerModule],
   templateUrl: './biblioteca.html',
   styleUrl: './biblioteca.scss'
 })
@@ -24,10 +25,12 @@ export class Biblioteca implements OnInit {
 
   selectedContent: any | null = null;
   selectedContentUrl: SafeResourceUrl | null = null;
+  youtubeVideoId: string | null = null;
   showIframeModal: boolean = false;
 
   ngOnInit(): void {
     this.fetchApprovedContributions();
+    this.loadYouTubeApi();
   }
 
   async fetchApprovedContributions(): Promise<void> {
@@ -37,7 +40,6 @@ export class Biblioteca implements OnInit {
 
     this.allContent = querySnapshot.docs.map(doc => {
       const data = doc.data();
-      // Map Firestore data to match the template's expected structure
       const mappedData = {
         id: doc.id,
         category: data['category'] || '',
@@ -83,15 +85,16 @@ export class Biblioteca implements OnInit {
   }
 
   async openContent(item: any): Promise<void> {
-    // Increment view count in Firestore
     const docRef = doc(this.firestore, 'community-contributions', item.id);
     await updateDoc(docRef, { viewCount: increment(1) });
-
-    // Update the local view count immediately for responsiveness
     item.views++;
 
-    if (item.type === 'video' || item.type === 'audio' || item.type === 'image') {
-      this.selectedContent = item;
+    this.selectedContent = item;
+    this.youtubeVideoId = this.getYouTubeVideoId(item.fileUrl);
+
+    if (item.type === 'video' && this.youtubeVideoId) {
+      this.showIframeModal = true;
+    } else if (item.type === 'video' || item.type === 'audio' || item.type === 'image') {
       this.selectedContentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(item.fileUrl);
       this.showIframeModal = true;
     } else {
@@ -101,16 +104,28 @@ export class Biblioteca implements OnInit {
 
   closeIframeModal(): void {
     this.showIframeModal = false;
-    this.selectedContentUrl = null;
     this.selectedContent = null;
+    this.selectedContentUrl = null;
+    this.youtubeVideoId = null;
+  }
+
+  getYouTubeVideoId(url: string): string | null {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+
+  loadYouTubeApi() {
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.body.appendChild(tag);
   }
 
   async downloadContent(item: any): Promise<void> {
     try {
       const response = await fetch(item.fileUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -122,51 +137,50 @@ export class Biblioteca implements OnInit {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download failed:', error);
-      // Optionally, show an error message to the user
       alert('No se pudo descargar el archivo. Por favor, intente de nuevo.');
     }
   }
 
   getActionText(type: string): string {
-    switch (type) {
-      case 'video': return 'Ver Video';
-      case 'audio': return 'Reproducir';
-      case 'image': return 'Ver Imagen';
-      case 'document': return 'Ver Documento';
-      default: return 'Ver Contenido';
-    }
+    const actions: { [key: string]: string } = {
+      video: 'Ver Video',
+      audio: 'Reproducir',
+      image: 'Ver Imagen',
+      document: 'Ver Documento',
+    };
+    return actions[type] || 'Ver Contenido';
   }
 
   getActionIcon(type: string): string {
-    switch (type) {
-      case 'video': return 'fas fa-video';
-      case 'audio': return 'fas fa-headphones-alt';
-      case 'image': return 'fas fa-image';
-      case 'document': return 'fas fa-file-alt';
-      default: return 'fas fa-eye';
-    }
+    const icons: { [key: string]: string } = {
+      video: 'fas fa-video',
+      audio: 'fas fa-headphones-alt',
+      image: 'fas fa-image',
+      document: 'fas fa-file-alt',
+    };
+    return icons[type] || 'fas fa-eye';
   }
 
   getCategoryDisplay(category: string): string {
-    switch (category) {
-      case 'medicine': return 'Medicina Tradicional';
-      case 'ritual': return 'Rituales y Ceremonias';
-      case 'music': return 'Música y Danza';
-      case 'history': return 'Historia Oral';
-      case 'language': return 'Lengua y Vocabulario';
-      default: return category;
-    }
+    const categories: { [key: string]: string } = {
+      medicine: 'Medicina Tradicional',
+      ritual: 'Rituales y Ceremonias',
+      music: 'Música y Danza',
+      history: 'Historia Oral',
+      language: 'Lengua y Vocabulario',
+    };
+    return categories[category] || category;
   }
 
   getCategoryIcon(category: string): string {
-    switch (category) {
-      case 'medicine': return 'fas fa-leaf';
-      case 'ritual': return 'fas fa-hand-sparkles';
-      case 'music': return 'fas fa-music';
-      case 'history': return 'fas fa-book';
-      case 'language': return 'fas fa-language';
-      default: return 'fas fa-folder';
-    }
+    const icons: { [key: string]: string } = {
+      medicine: 'fas fa-leaf',
+      ritual: 'fas fa-hand-sparkles',
+      music: 'fas fa-music',
+      history: 'fas fa-book',
+      language: 'fas fa-language',
+    };
+    return icons[category] || 'fas fa-folder';
   }
 
   get totalViews(): number {

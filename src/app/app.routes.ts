@@ -11,10 +11,18 @@ import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { ContribuirComponent } from './features/contribuir/contribuir';
 import { authGuard } from './core/guards/auth-guard';
+import { AuthLayout } from './layout/auth-layout/auth-layout';
+import { Moderation } from './features/moderation/moderation';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  {
+    path: '',
+    component: AuthLayout,
+    children: [
+      { path: 'login', component: Login },
+      { path: 'register', component: Register },
+    ]
+  },
   {
     path: '',
     component: MainLayout,
@@ -29,6 +37,7 @@ export const routes: Routes = [
       { path: 'lecciones', component: Lecciones },
       { path: 'contribuir', component:ContribuirComponent  },
       { path: 'biblioteca', component: Biblioteca },
+      { path: 'moderation', component: Moderation },
     ]
   }
 ];

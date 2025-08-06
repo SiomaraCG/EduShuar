@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +23,7 @@ export class Register {
   private auth: Auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   async register() {
     this.errorMessage = '';
@@ -64,6 +66,27 @@ export class Register {
           break;
       }
       console.error('Error al registrar usuario:', error);
+    }
+  }
+
+  async registerWithGoogle() {
+    try {
+      const userCredential = await this.authService.signInWithGoogle();
+      const user = userCredential.user;
+
+      await setDoc(doc(this.firestore, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        createdAt: new Date(),
+        lastActive: new Date(),
+        isActive: true,
+      });
+
+      this.router.navigate(['/dashboard']);
+    } catch (error) {
+      console.error('Error al registrar con Google:', error);
+      this.errorMessage = 'No se pudo registrar con Google. Inténtalo de nuevo.';
     }
   }
 }

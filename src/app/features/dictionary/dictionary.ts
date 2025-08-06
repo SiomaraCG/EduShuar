@@ -21,7 +21,7 @@ export class Dictionary {
       category: 'cultura',
       difficulty: 'avanzado',
       pronunciationAudio: 'audio/nunkui.mp3',
-      imageUrl: 'img/nunkui.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Nunkui es una figura central en la mitología Shuar.'
     },
     {
@@ -30,7 +30,7 @@ export class Dictionary {
       category: 'animales',
       difficulty: 'intermedio',
       pronunciationAudio: 'audio/yawi.mp3',
-      imageUrl: 'img/yawi.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'El yawi es un animal sagrado para los Shuar.'
     },
     {
@@ -39,7 +39,7 @@ export class Dictionary {
       category: 'cocina',
       difficulty: 'basico',
       pronunciationAudio: 'audio/uwi.mp3',
-      imageUrl: 'img/uwi.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'La uwi es la bebida tradicional Shuar.'
     },
     {
@@ -48,7 +48,7 @@ export class Dictionary {
       category: 'naturaleza',
       difficulty: 'basico',
       pronunciationAudio: 'audio/etsa.mp3',
-      imageUrl: 'img/etsa.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Etsa es el dios del sol en la cultura Shuar.'
     },
     {
@@ -57,7 +57,7 @@ export class Dictionary {
       category: 'naturaleza',
       difficulty: 'basico',
       pronunciationAudio: 'audio/kaa.mp3',
-      imageUrl: 'img/kaa.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'El kaa es fundamental en el ecosistema amazónico.'
     },
     {
@@ -66,7 +66,7 @@ export class Dictionary {
       category: 'animales',
       difficulty: 'intermedio',
       pronunciationAudio: 'audio/panki.mp3',
-      imageUrl: 'img/panki.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'La panki es un animal respetado en la selva.'
     },
     {
@@ -75,7 +75,7 @@ export class Dictionary {
       category: 'cultura',
       difficulty: 'basico',
       pronunciationAudio: 'audio/aents.mp3',
-      imageUrl: 'img/aents.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Aents se refiere a la gente Shuar.'
     },
     {
@@ -84,7 +84,7 @@ export class Dictionary {
       category: 'hogar',
       difficulty: 'basico',
       pronunciationAudio: 'audio/jempue.mp3',
-      imageUrl: 'img/jempue.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Las jempue son construidas con materiales de la selva.'
     },
     {
@@ -93,7 +93,7 @@ export class Dictionary {
       category: 'familia',
       difficulty: 'basico',
       pronunciationAudio: 'audio/naari.mp3',
-      imageUrl: 'img/naari.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Cada naari tiene un significado especial.'
     },
     {
@@ -102,7 +102,7 @@ export class Dictionary {
       category: 'medicina',
       difficulty: 'intermedio',
       pronunciationAudio: 'audio/wapik.mp3',
-      imageUrl: 'img/wapik.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'El wapik es usado para curar diversas enfermedades.'
     },
     {
@@ -111,7 +111,7 @@ export class Dictionary {
       category: 'cultura',
       difficulty: 'avanzado',
       pronunciationAudio: 'audio/arutam.mp3',
-      imageUrl: 'img/arutam.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Buscar el arutam es parte de la iniciación Shuar.'
     },
     {
@@ -120,7 +120,7 @@ export class Dictionary {
       category: 'cultura',
       difficulty: 'basico',
       pronunciationAudio: 'audio/shuar.mp3',
-      imageUrl: 'img/shuar.jpg',
+      imageUrl: 'img/inicio.jpg',
       context: 'Los Shuar son un pueblo indígena de la Amazonía.'
     }
   ];

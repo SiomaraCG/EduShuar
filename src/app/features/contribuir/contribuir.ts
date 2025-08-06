@@ -10,20 +10,20 @@ import {
     addDoc, 
     Timestamp 
 } from '@angular/fire/firestore';
-import { CloudinaryApi } from '../../core/services/cloudinary-api'; // Importamos el nuevo servicio
+import { CloudinaryApi } from '../../core/services/cloudinary-api';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-contribuir',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './contribuir.html',
   styleUrls: ['./contribuir.scss'],
 })
 export class ContribuirComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private firestore: Firestore = inject(Firestore);
-  private cloudinaryApi = inject(CloudinaryApi); // Inyectamos el servicio
+  private cloudinaryApi = inject(CloudinaryApi);
 
   activeTab: 'form' | 'guidelines' = 'form';
   contributionForm!: FormGroup;
@@ -31,13 +31,15 @@ export class ContribuirComponent implements OnInit, OnDestroy {
   isUploading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  fileAcceptTypes = 'audio/*,video/*,image/*';
+  fileAcceptTypes = 'audio/*,video/*,image/*,application/pdf';
   private uploadSub: Subscription | null = null;
+  private valueChangesSub: Subscription | null = null;
 
   contentTypes = [
     { id: 'audio', name: 'Audio', icon: 'fas fa-volume-up', accept: 'audio/*' },
     { id: 'video', name: 'Video', icon: 'fas fa-video', accept: 'video/*' },
     { id: 'image', name: 'Imagen', icon: 'fas fa-image', accept: 'image/*' },
+    { id: 'document', name: 'Documento', icon: 'fas fa-file-alt', accept: 'application/pdf' },
   ];
 
   categories = [
@@ -51,7 +53,9 @@ export class ContribuirComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.contributionForm = this.fb.group({
       contentType: ['image', Validators.required],
-      file: [null, Validators.required],
+      videoInputMethod: ['upload'],
+      file: [null],
+      videoUrl: [''],
       title: ['', Validators.required],
       shuarTitle: [''],
       description: ['', Validators.required],
@@ -65,19 +69,59 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       permissions: [false, Validators.requiredTrue],
       respect: [false, Validators.requiredTrue],
     });
+
     this.selectContentType('image');
+    this.setupConditionalValidators();
   }
 
   ngOnDestroy(): void {
-    if (this.uploadSub) {
-      this.uploadSub.unsubscribe();
-    }
+    this.uploadSub?.unsubscribe();
+    this.valueChangesSub?.unsubscribe();
+  }
+
+  private setupConditionalValidators(): void {
+    const videoInputMethodControl = this.contributionForm.get('videoInputMethod');
+    this.valueChangesSub = videoInputMethodControl
+      ? videoInputMethodControl.valueChanges.subscribe(method => {
+          const fileControl = this.contributionForm.get('file');
+          const videoUrlControl = this.contributionForm.get('videoUrl');
+
+          if (this.contributionForm.get('contentType')?.value === 'video') {
+            if (method === 'upload') {
+              fileControl?.setValidators(Validators.required);
+              videoUrlControl?.clearValidators();
+            } else { // url
+              fileControl?.clearValidators();
+              videoUrlControl?.setValidators([Validators.required, Validators.pattern('https?://.+')]);
+            }
+          } else {
+            fileControl?.setValidators(Validators.required);
+            videoUrlControl?.clearValidators();
+          }
+          fileControl?.updateValueAndValidity();
+          videoUrlControl?.updateValueAndValidity();
+        })
+      : null;
   }
 
   selectContentType(typeId: string): void {
     this.contributionForm.get('contentType')?.setValue(typeId);
     const selectedType = this.contentTypes.find(t => t.id === typeId);
     this.fileAcceptTypes = selectedType ? selectedType.accept : '*';
+
+    const fileControl = this.contributionForm.get('file');
+    const videoUrlControl = this.contributionForm.get('videoUrl');
+
+    if (typeId === 'video') {
+      this.contributionForm.get('videoInputMethod')?.enable();
+      this.contributionForm.get('videoInputMethod')?.updateValueAndValidity();
+    } else {
+      this.contributionForm.get('videoInputMethod')?.disable();
+      fileControl?.setValidators(Validators.required);
+      videoUrlControl?.clearValidators();
+    }
+    fileControl?.updateValueAndValidity();
+    videoUrlControl?.updateValueAndValidity();
   }
 
   onFileChange(event: Event): void {
@@ -95,49 +139,60 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const formValue = this.contributionForm.value;
+
+    if (formValue.contentType === 'video' && formValue.videoInputMethod === 'url') {
+      this.saveContribution(formValue.videoUrl);
+    } else {
+      this.uploadFileAndSave(formValue.file);
+    }
+  }
+
+  private uploadFileAndSave(file: File): void {
     this.isUploading = true;
     this.successMessage = null;
     this.errorMessage = null;
     this.uploadProgress = 0;
 
-    const { file, ...formValue } = this.contributionForm.value;
-
     this.uploadSub = this.cloudinaryApi.upload(file).pipe(
       finalize(() => {
         this.isUploading = false;
       })
-    ).subscribe(async (result) => {
+    ).subscribe(result => {
       this.uploadProgress = result.progress;
       if (result.error) {
         this.errorMessage = 'Hubo un error al subir el archivo. Por favor, inténtalo de nuevo.';
         this.isUploading = false;
       }
       if (result.url) {
-        const contributionData = {
-          ...formValue,
-          tags: formValue.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
-          fileUrl: result.url, 
-          moderation: { status: 'pending' },
-          submissionDate: Timestamp.now(),
-        };
-
-        try {
-          const contributionsCollection = collection(this.firestore, 'community-contributions');
-          await addDoc(contributionsCollection, contributionData);
-          this.successMessage = '¡Tu contribución ha sido enviada con éxito para su revisión!';
-          this.resetForm();
-        } catch (dbError) {
-          console.error('Error al guardar en Firestore:', dbError);
-          this.errorMessage = 'El archivo se subió, pero no se pudo guardar la contribución. Contacta a soporte.';
-        }
+        this.saveContribution(result.url);
       }
     });
   }
 
-  onCancel(): void {
-    if (this.uploadSub) {
-      this.uploadSub.unsubscribe();
+  private async saveContribution(fileUrl: string): Promise<void> {
+    const { file, videoUrl, ...formValue } = this.contributionForm.value;
+    const contributionData = {
+      ...formValue,
+      tags: formValue.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
+      fileUrl: fileUrl, 
+      moderation: { status: 'pending' },
+      submissionDate: Timestamp.now(),
+    };
+
+    try {
+      const contributionsCollection = collection(this.firestore, 'community-contributions');
+      await addDoc(contributionsCollection, contributionData);
+      this.successMessage = '¡Tu contribución ha sido enviada con éxito para su revisión!';
+      this.resetForm();
+    } catch (dbError) {
+      console.error('Error al guardar en Firestore:', dbError);
+      this.errorMessage = 'No se pudo guardar la contribución. Contacta a soporte.';
     }
+  }
+
+  onCancel(): void {
+    this.uploadSub?.unsubscribe();
     this.resetForm();
   }
 
@@ -146,7 +201,9 @@ export class ContribuirComponent implements OnInit, OnDestroy {
     this.uploadProgress = 0;
     this.contributionForm.reset({
       contentType: 'image',
+      videoInputMethod: 'upload',
       file: null,
+      videoUrl: '',
       title: '',
       shuarTitle: '',
       description: '',
@@ -161,8 +218,6 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       respect: false,
     });
 
-    
-
     const fileInput = document.getElementById('file-upload') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
 
@@ -170,7 +225,5 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       this.successMessage = null;
       this.errorMessage = null;
     }, 8000);
-
-    
   }
 }

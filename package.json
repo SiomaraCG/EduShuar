@@ -29,6 +29,7 @@
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "@angular/youtube-player": "^20.1.5",
     "@fortawesome/fontawesome-free": "^7.0.0",
     "@tailwindcss/postcss": "^4.1.11",
     "dotenv": "^17.2.1",
