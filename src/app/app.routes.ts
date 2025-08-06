@@ -10,6 +10,7 @@ import { Biblioteca } from './features/biblioteca/biblioteca';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { ContribuirComponent } from './features/contribuir/contribuir';
+import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   {
     path: '',
     component: MainLayout,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard },

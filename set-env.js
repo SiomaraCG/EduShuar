@@ -17,6 +17,10 @@ const envConfigFile = `export const environment = {
      storageBucket: '${process.env.FIREBASE_STORAGE_BUCKET}',
      messagingSenderId: '${process.env.FIREBASE_MESSAGING_SENDER_ID}',
      appId: '${process.env.FIREBASE_APP_ID}'
+   },
+   cloudinary: {
+     cloudName: '${process.env.CLOUDINARY_CLOUD_NAME}',
+     uploadPreset: '${process.env.CLOUDINARY_UPLOAD_PRESET}'
    }
 };
 `;
@@ -45,6 +49,10 @@ const prodEnvConfigFile = `export const environment = {
      storageBucket: '${process.env.FIREBASE_STORAGE_BUCKET}',
      messagingSenderId: '${process.env.FIREBASE_MESSAGING_SENDER_ID}',
      appId: '${process.env.FIREBASE_APP_ID}'
+   },
+   cloudinary: {
+     cloudName: '${process.env.CLOUDINARY_CLOUD_NAME}',
+     uploadPreset: '${process.env.CLOUDINARY_UPLOAD_PRESET}'
    }
 };
 `;

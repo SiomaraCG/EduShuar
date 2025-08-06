@@ -51,20 +51,13 @@
         }
       </div>
       <div>
-        <label for="role" class="block text-sm font-semibold text-shuar-soft-black mb-1">Rol</label>
-        <select id="role" name="role" [(ngModel)]="role" required
-                class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out bg-white"
-                #roleInput="ngModel">
-          <option value="">Selecciona un rol</option>
-          <option value="student">Estudiante</option>
-          <option value="teacher">Profesor</option>
-          <option value="elder">Anciano</option>
-          <option value="moderator">Moderador</option>
-          <option value="admin">Administrador</option>
-        </select>
-        @if (roleInput.invalid && (roleInput.dirty || roleInput.touched)) {
+        <label for="confirmPassword" class="block text-sm font-semibold text-shuar-soft-black mb-1">Confirmar Contraseña</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required
+               class="w-full px-4 py-2 border-2 border-shuar-dark-green rounded-lg shadow-sm focus:ring-2 focus:ring-shuar-light-green focus:border-transparent transition duration-300 ease-in-out"
+               #confirmPasswordInput="ngModel">
+        @if (confirmPasswordInput.invalid && (confirmPasswordInput.dirty || confirmPasswordInput.touched)) {
           <div class="text-red-500 text-xs mt-1">
-            Debes seleccionar un rol.
+            La confirmación de contraseña es requerida.
           </div>
         }
       </div>

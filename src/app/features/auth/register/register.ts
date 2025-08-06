@@ -15,8 +15,8 @@ import { CommonModule } from '@angular/common';
 export class Register {
   email = '';
   password = '';
+  confirmPassword = '';
   displayName = '';
-  role = '';
   errorMessage = '';
 
   private auth: Auth = inject(Auth);
@@ -25,8 +25,13 @@ export class Register {
 
   async register() {
     this.errorMessage = '';
-    if (!this.email || !this.password || !this.displayName || !this.role) {
+    if (!this.email || !this.password || !this.confirmPassword || !this.displayName) {
       this.errorMessage = 'Todos los campos son obligatorios.';
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Las contraseñas no coinciden.';
       return;
     }
 
@@ -40,7 +45,6 @@ export class Register {
         uid: user.uid,
         email: this.email,
         displayName: this.displayName,
-        role: this.role,
         createdAt: new Date(),
         lastActive: new Date(),
         isActive: true,

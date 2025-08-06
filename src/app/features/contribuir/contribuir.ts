@@ -117,7 +117,7 @@ export class ContribuirComponent implements OnInit, OnDestroy {
           ...formValue,
           tags: formValue.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
           fileUrl: result.url, 
-          status: 'pending',
+          moderation: { status: 'pending' },
           submissionDate: Timestamp.now(),
         };
 
@@ -141,7 +141,7 @@ export class ContribuirComponent implements OnInit, OnDestroy {
     this.resetForm();
   }
 
-  private resetForm(): void {
+  public resetForm(): void {
     this.isUploading = false;
     this.uploadProgress = 0;
     this.contributionForm.reset({
@@ -161,6 +161,8 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       respect: false,
     });
 
+    
+
     const fileInput = document.getElementById('file-upload') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
 
@@ -168,5 +170,7 @@ export class ContribuirComponent implements OnInit, OnDestroy {
       this.successMessage = null;
       this.errorMessage = null;
     }, 8000);
+
+    
   }
 }

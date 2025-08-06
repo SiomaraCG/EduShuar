@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Firestore, collection, query, where, getDocs, doc, updateDoc, increment } from '@angular/fire/firestore';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-biblioteca',
@@ -9,75 +11,49 @@ import { CommonModule } from '@angular/common';
   templateUrl: './biblioteca.html',
   styleUrl: './biblioteca.scss'
 })
-export class Biblioteca {
+export class Biblioteca implements OnInit {
+  private firestore: Firestore = inject(Firestore);
+  private sanitizer: DomSanitizer = inject(DomSanitizer);
+
   searchTerm: string = '';
   selectedCategory: string = 'all';
   selectedContentType: string = 'all';
 
-  // Placeholder for your content data
-  allContent: any[] = [
-    // Example content structure (you'll replace this with actual data from Firestore or a service)
-    {
-      category: 'medicina',
-      type: 'video',
-      title: 'Medicina Tradicional Shuar',
-      description: 'Conocimientos ancestrales sobre plantas medicinales y prácticas curativas.',
-      duration: '30 min',
-      views: '560',
-      contributor: 'Taish Nunkai',
-      actionText: 'Reproducir',
-      actionIcon: 'fas fa-play-circle'
-    },
-    {
-      category: 'ceremonias',
-      type: 'audio',
-      title: 'Ceremonias Sagradas Shuar',
-      description: 'Rituales y celebraciones que conectan con la espiritualidad y la naturaleza.',
-      duration: '45 min',
-      views: '780',
-      contributor: 'Yawi Entsakua',
-      actionText: 'Reproducir',
-      actionIcon: 'fas fa-play-circle'
-    },
-    {
-      category: 'construccion',
-      type: 'video',
-      title: 'Técnicas de Construcción Shuar',
-      description: 'Métodos tradicionales para la edificación de viviendas y estructuras.',
-      duration: '25 min',
-      views: '320',
-      contributor: 'Panki Kintia',
-      actionText: 'Ver Video',
-      actionIcon: 'fas fa-video'
-    },
-    {
-      category: 'cocina',
-      type: 'document',
-      title: 'Cocina Tradicional Shuar',
-      description: 'Recetas ancestrales y técnicas culinarias de la cultura Shuar.',
-      duration: '15 min',
-      views: '410',
-      contributor: 'Nantu Washiki',
-      actionText: 'Ver Receta',
-      actionIcon: 'fas fa-book-open'
-    },
-    {
-      category: 'agricultura',
-      type: 'image',
-      title: 'Agricultura Sostenible Shuar',
-      description: 'Prácticas agrícolas respetuosas con el medio ambiente y la tradición.',
-      duration: '20 min',
-      views: '670',
-      contributor: 'Shikiya Kuank',
-      actionText: 'Ver Imagen',
-      actionIcon: 'fas fa-image'
-    }
-  ];
-
+  allContent: any[] = [];
   filteredContent: any[] = [];
 
-  constructor() {
-    this.filterContent(); // Initial filter
+  selectedContent: any | null = null;
+  selectedContentUrl: SafeResourceUrl | null = null;
+  showIframeModal: boolean = false;
+
+  ngOnInit(): void {
+    this.fetchApprovedContributions();
+  }
+
+  async fetchApprovedContributions(): Promise<void> {
+    const contributionsCollection = collection(this.firestore, 'community-contributions');
+    const q = query(contributionsCollection, where('moderation.status', '==', 'approved'));
+    const querySnapshot = await getDocs(q);
+
+    this.allContent = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      // Map Firestore data to match the template's expected structure
+      const mappedData = {
+        id: doc.id,
+        category: data['category'] || '',
+        type: data['contentType'] || '',
+        title: data['title'] || '',
+        shuarTitle: data['shuarTitle'] || '',
+        description: data['description'] || '',
+        shuarDescription: data['shuarDescription'] || '',
+        duration: data['duration'] ? `${data['duration']} min` : '',
+        views: data['viewCount'] || 0,
+        contributor: data['contributor'] || '',
+        fileUrl: data['fileUrl'] || '',
+      };
+      return mappedData;
+    });
+    this.filterContent();
   }
 
   onSearchChange(event: Event) {
@@ -106,6 +82,51 @@ export class Biblioteca {
     });
   }
 
+  async openContent(item: any): Promise<void> {
+    // Increment view count in Firestore
+    const docRef = doc(this.firestore, 'community-contributions', item.id);
+    await updateDoc(docRef, { viewCount: increment(1) });
+
+    // Update the local view count immediately for responsiveness
+    item.views++;
+
+    if (item.type === 'video' || item.type === 'audio' || item.type === 'image') {
+      this.selectedContent = item;
+      this.selectedContentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(item.fileUrl);
+      this.showIframeModal = true;
+    } else {
+      window.open(item.fileUrl, '_blank');
+    }
+  }
+
+  closeIframeModal(): void {
+    this.showIframeModal = false;
+    this.selectedContentUrl = null;
+    this.selectedContent = null;
+  }
+
+  async downloadContent(item: any): Promise<void> {
+    try {
+      const response = await fetch(item.fileUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = item.title || 'download';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download failed:', error);
+      // Optionally, show an error message to the user
+      alert('No se pudo descargar el archivo. Por favor, intente de nuevo.');
+    }
+  }
+
   getActionText(type: string): string {
     switch (type) {
       case 'video': return 'Ver Video';
@@ -124,5 +145,31 @@ export class Biblioteca {
       case 'document': return 'fas fa-file-alt';
       default: return 'fas fa-eye';
     }
+  }
+
+  getCategoryDisplay(category: string): string {
+    switch (category) {
+      case 'medicine': return 'Medicina Tradicional';
+      case 'ritual': return 'Rituales y Ceremonias';
+      case 'music': return 'Música y Danza';
+      case 'history': return 'Historia Oral';
+      case 'language': return 'Lengua y Vocabulario';
+      default: return category;
+    }
+  }
+
+  getCategoryIcon(category: string): string {
+    switch (category) {
+      case 'medicine': return 'fas fa-leaf';
+      case 'ritual': return 'fas fa-hand-sparkles';
+      case 'music': return 'fas fa-music';
+      case 'history': return 'fas fa-book';
+      case 'language': return 'fas fa-language';
+      default: return 'fas fa-folder';
+    }
+  }
+
+  get totalViews(): number {
+    return this.filteredContent.reduce((sum, item) => sum + item.views, 0);
   }
 }
