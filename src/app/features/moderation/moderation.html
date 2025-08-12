@@ -46,123 +46,44 @@
     </div>
   </header>
 
-  <!-- Formulario para subir palabras -->
-  <div class="mb-8 relative z-10">
-    <div class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 border border-orange-100/50 relative overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-r from-orange-50/20 to-amber-50/20"></div>
-      <h2 class="text-2xl font-bold text-amber-800 mb-4">Subir Nueva Palabra</h2>
-      <form [formGroup]="wordForm" (ngSubmit)="onSubmitWord()" class="space-y-6">
-        <!-- Campo de Palabra en Español -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <input 
-            type="text" 
-            id="spanishWord" 
-            formControlName="spanish" 
-            required 
-            placeholder="Palabra en Español"
-            class="relative w-full px-6 py-4 pl-14 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-xl">
-            <i class="fas fa-language text-white text-sm"></i>
-          </div>
-        </div>
+  <!-- Botones para abrir modales -->
+  <div class="mb-8 relative z-10 flex flex-wrap justify-center gap-4">
+    <button (click)="openFormModal('word')" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl shadow-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105">
+      <i class="fas fa-plus-circle mr-2"></i>
+      Subir Nueva Palabra
+    </button>
+    <button (click)="openFormModal('content')" class="px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-500 text-white font-semibold rounded-xl shadow-lg hover:from-sky-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105">
+      <i class="fas fa-plus-circle mr-2"></i>
+      Subir Juego o Lección
+    </button>
+  </div>
 
-        <!-- Campo de Palabra en Shuar -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <input 
-            type="text" 
-            id="shuarWord" 
-            formControlName="shuar" 
-            required 
-            placeholder="Palabra en Shuar"
-            class="relative w-full px-6 py-4 pl-14 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500">
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-xl">
-            <i class="fas fa-globe text-white text-sm"></i>
-          </div>
-        </div>
-
-        <!-- Campo de Significado -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <textarea 
-            id="significado" 
-            formControlName="significado" 
-            required 
-            placeholder="Significado de la palabra"
-            rows="3"
-            class="relative w-full px-6 py-4 pl-14 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500"></textarea>
-          <div class="absolute left-4 top-4 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-xl">
-            <i class="fas fa-info-circle text-white text-sm"></i>
-          </div>
-        </div>
-
-        <!-- Campo de Categoría -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <label for="category" class="block text-sm font-semibold text-gray-700 ml-1 mb-2">Categoría</label>
-          <select 
-            id="category" 
-            formControlName="category" 
-            required
-            class="relative w-full px-6 py-4 pl-14 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800">
-            <option value="">Selecciona una categoría</option>
-            @for (cat of wordCategories; track cat.id) {
-              <option [value]="cat.id">{{ cat.name }}</option>
+  <!-- Modal para formularios -->
+  @if (showFormModal()) {
+    <div class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto relative flex flex-col border-4 border-amber-300">
+        <div class="flex justify-between items-center p-4 bg-gray-50 border-b sticky top-0 z-10">
+          <h3 class="text-xl font-bold text-gray-800">
+            @if (formToShow() === 'word') {
+              Subir Nueva Palabra
+            } @else {
+              Subir Juego o Lección
             }
-          </select>
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-xl">
-            <i class="fas fa-tags text-white text-sm"></i>
-          </div>
-        </div>
-
-        <!-- Campo de Dificultad -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <label for="difficulty" class="block text-sm font-semibold text-gray-700 ml-1 mb-2">Dificultad</label>
-          <select 
-            id="difficulty" 
-            formControlName="difficulty" 
-            required
-            class="relative w-full px-6 py-4 pl-14 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800">
-            <option value="">Selecciona la dificultad</option>
-            @for (diff of difficulties; track diff.id) {
-              <option [value]="diff.id">{{ diff.name }}</option>
-            }
-          </select>
-          <div class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-xl">
-            <i class="fas fa-star text-white text-sm"></i>
-          </div>
-        </div>
-
-        <!-- Campo de Imagen -->
-        <div class="relative group">
-          <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          <label for="wordImage" class="block text-sm font-semibold text-gray-700 ml-1 mb-2">Imagen de la palabra</label>
-          <input 
-            type="file" 
-            id="wordImage" 
-            (change)="onFileChange($event)" 
-            #wordImageInput
-            class="relative w-full px-6 py-4 border-2 rounded-2xl shadow-lg focus:ring-4 focus:ring-amber-200/50 focus:border-amber-500 transition-all duration-300 ease-in-out bg-white/80 backdrop-blur-sm text-gray-800 placeholder-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
-        </div>
-
-        <div class="mt-4 text-right">
-          <button 
-            type="submit" 
-            [disabled]="!wordForm.valid" 
-            class="group relative w-full px-6 py-4 font-bold text-white bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl shadow-xl hover:from-amber-700 hover:to-orange-700 focus:outline-none focus:ring-4 focus:ring-amber-200/50 transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden">
-            <!-- Efecto de brillo -->
-            <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div class="relative flex items-center justify-center gap-3">
-              <i class="fas fa-plus-circle text-lg group-hover:scale-110 transition-transform"></i>
-              <span class="text-lg">Guardar Palabra</span>
-            </div>
+          </h3>
+          <button (click)="closeFormModal()" class="text-gray-500 hover:text-red-600 transition-colors text-3xl font-bold leading-none focus:outline-none w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200">
+            &times;
           </button>
         </div>
-      </form>
+        <div class="p-6">
+          @if (formToShow() === 'word') {
+            <app-word-form></app-word-form>
+          } @else if (formToShow() === 'content') {
+            <app-content-form></app-content-form>
+          }
+        </div>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Filtros y controles superiores -->
   <div class="mb-8 relative z-10">
