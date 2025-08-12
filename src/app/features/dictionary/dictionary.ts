@@ -1,6 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface Word {
+  spanish: string;
+  shuar: string;
+  significado: string;
+  category: string;
+  difficulty: string;
+  imageUrl: string;
+}
 
 @Component({
   selector: 'app-dictionary',
@@ -9,125 +21,46 @@ import { CommonModule } from '@angular/common';
   templateUrl: './dictionary.html',
   styleUrl: './dictionary.scss'
 })
-export class Dictionary {
+export class Dictionary implements OnInit {
+  private firestore: Firestore = inject(Firestore);
+
   searchTerm: string = '';
   selectedCategory: string = 'all';
   selectedDifficulty: string = 'all';
 
-  allWords: any[] = [
-    {
-      shuarWord: 'Nunkui',
-      spanishTranslation: 'Diosa de la tierra y la fertilidad',
-      category: 'cultura',
-      difficulty: 'avanzado',
-      pronunciationAudio: 'audio/nunkui.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Nunkui es una figura central en la mitología Shuar.'
-    },
-    {
-      shuarWord: 'Yawi',
-      spanishTranslation: 'Jaguar',
-      category: 'animales',
-      difficulty: 'intermedio',
-      pronunciationAudio: 'audio/yawi.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'El yawi es un animal sagrado para los Shuar.'
-    },
-    {
-      shuarWord: 'Uwi',
-      spanishTranslation: 'Chicha de yuca',
-      category: 'cocina',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/uwi.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'La uwi es la bebida tradicional Shuar.'
-    },
-    {
-      shuarWord: 'Etsa',
-      spanishTranslation: 'Sol',
-      category: 'naturaleza',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/etsa.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Etsa es el dios del sol en la cultura Shuar.'
-    },
-    {
-      shuarWord: 'Kaa',
-      spanishTranslation: 'Árbol',
-      category: 'naturaleza',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/kaa.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'El kaa es fundamental en el ecosistema amazónico.'
-    },
-    {
-      shuarWord: 'Panki',
-      spanishTranslation: 'Serpiente',
-      category: 'animales',
-      difficulty: 'intermedio',
-      pronunciationAudio: 'audio/panki.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'La panki es un animal respetado en la selva.'
-    },
-    {
-      shuarWord: 'Aents',
-      spanishTranslation: 'Persona',
-      category: 'cultura',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/aents.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Aents se refiere a la gente Shuar.'
-    },
-    {
-      shuarWord: 'Jempue',
-      spanishTranslation: 'Casa',
-      category: 'hogar',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/jempue.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Las jempue son construidas con materiales de la selva.'
-    },
-    {
-      shuarWord: 'Naari',
-      spanishTranslation: 'Nombre',
-      category: 'familia',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/naari.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Cada naari tiene un significado especial.'
-    },
-    {
-      shuarWord: 'Wapik',
-      spanishTranslation: 'Medicina',
-      category: 'medicina',
-      difficulty: 'intermedio',
-      pronunciationAudio: 'audio/wapik.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'El wapik es usado para curar diversas enfermedades.'
-    },
-    {
-      shuarWord: 'Arutam',
-      spanishTranslation: 'Espíritu ancestral',
-      category: 'cultura',
-      difficulty: 'avanzado',
-      pronunciationAudio: 'audio/arutam.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Buscar el arutam es parte de la iniciación Shuar.'
-    },
-    {
-      shuarWord: 'Shuar',
-      spanishTranslation: 'Gente',
-      category: 'cultura',
-      difficulty: 'basico',
-      pronunciationAudio: 'audio/shuar.mp3',
-      imageUrl: 'img/inicio.jpg',
-      context: 'Los Shuar son un pueblo indígena de la Amazonía.'
-    }
+  allWords$: Observable<Word[]>;
+  allWords: Word[] = [];
+  filteredWords: Word[] = [];
+
+  // Categories and difficulties from moderation.ts for consistency
+  wordCategories = [
+    { id: 'all', name: 'Todo' },
+    { id: 'Familia', name: 'Familia' },
+    { id: 'Hogar', name: 'Hogar' },
+    { id: 'Naturaleza', name: 'Naturaleza' },
+    { id: 'Plantas', name: 'Plantas' },
+    { id: 'Animales', name: 'Animales' },
+    { id: 'Cultura', name: 'Cultura' },
+    { id: 'Partes del Cuerpo', name: 'Partes del Cuerpo' },
   ];
-  filteredWords: any[] = [];
+
+  difficulties = [
+    { id: 'all', name: 'Todos' },
+    { id: 'Basica', name: 'Básica' },
+    { id: 'Media', name: 'Media' },
+    { id: 'Avanzada', name: 'Avanzada' },
+  ];
 
   constructor() {
-    this.filterWords(); // Initial filter
+    const dictionaryCollection = collection(this.firestore, 'dictionary');
+    this.allWords$ = collectionData(dictionaryCollection, { idField: 'id' }) as Observable<Word[]>;
+  }
+
+  ngOnInit(): void {
+    this.allWords$.subscribe(words => {
+      this.allWords = words;
+      this.filterWords();
+    });
   }
 
   onSearchChange(event: Event) {
@@ -147,17 +80,12 @@ export class Dictionary {
 
   filterWords() {
     this.filteredWords = this.allWords.filter(word => {
-      const matchesCategory = this.selectedCategory === 'all' || word.category === this.selectedCategory;
-      const matchesDifficulty = this.selectedDifficulty === 'all' || word.difficulty === this.selectedDifficulty;
-      const matchesSearchTerm = word.shuarWord.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                                word.spanishTranslation.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                                (word.context && word.context.toLowerCase().includes(this.searchTerm.toLowerCase()));
+      const matchesCategory = this.selectedCategory === 'all' || word.category.toLowerCase() === this.selectedCategory.toLowerCase();
+      const matchesDifficulty = this.selectedDifficulty === 'all' || word.difficulty.toLowerCase() === this.selectedDifficulty.toLowerCase();
+      const matchesSearchTerm = word.shuar.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                                word.spanish.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                                word.significado.toLowerCase().includes(this.searchTerm.toLowerCase());
       return matchesCategory && matchesDifficulty && matchesSearchTerm;
     });
-  }
-
-  playAudio(audioUrl: string) {
-    const audio = new Audio(audioUrl);
-    audio.play();
   }
 }

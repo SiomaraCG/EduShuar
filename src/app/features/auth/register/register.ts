@@ -3,13 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Auth, createUserWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, collection, setDoc, doc } from '@angular/fire/firestore';
-import { CommonModule } from '@angular/common';
+
 import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, RouterModule, CommonModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
@@ -24,6 +24,8 @@ export class Register {
   private firestore: Firestore = inject(Firestore);
   private router = inject(Router);
   private authService = inject(AuthService);
+
+  private adminEmails = ['admin1@example.com', 'admin2@example.com', 'admin3@example.com'];
 
   async register() {
     this.errorMessage = '';
@@ -43,16 +45,19 @@ export class Register {
 
       await updateProfile(user, { displayName: this.displayName });
 
+      const userRole = this.adminEmails.includes(this.email) ? 'admin' : 'student';
+
       await setDoc(doc(this.firestore, "users", user.uid), {
         uid: user.uid,
         email: this.email,
         displayName: this.displayName,
+        role: userRole,
         createdAt: new Date(),
         lastActive: new Date(),
         isActive: true,
       });
 
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
     } catch (error: any) {
       switch (error.code) {
         case 'auth/email-already-in-use':
@@ -74,10 +79,13 @@ export class Register {
       const userCredential = await this.authService.signInWithGoogle();
       const user = userCredential.user;
 
+      const userRole = this.adminEmails.includes(user.email || '') ? 'admin' : 'student';
+
       await setDoc(doc(this.firestore, "users", user.uid), {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
+        role: userRole,
         createdAt: new Date(),
         lastActive: new Date(),
         isActive: true,

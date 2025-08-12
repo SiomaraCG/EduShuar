@@ -5,6 +5,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideStorage, getStorage } from '@angular/fire/storage';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { routes } from './app.routes';
 import { firebaseConfig } from './core/services/firebase.config';
@@ -17,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
-    importProvidersFrom(HttpClientModule),  // <-- Agregado aquí
+    importProvidersFrom(HttpClientModule, ReactiveFormsModule),
   ]
 };

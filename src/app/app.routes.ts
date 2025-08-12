@@ -13,15 +13,16 @@ import { ContribuirComponent } from './features/contribuir/contribuir';
 import { authGuard } from './core/guards/auth-guard';
 import { AuthLayout } from './layout/auth-layout/auth-layout';
 import { Moderation } from './features/moderation/moderation';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'auth',
     component: AuthLayout,
     children: [
       { path: 'login', component: Login },
       { path: 'register', component: Register },
-    ]
+    ],
   },
   {
     path: '',
@@ -35,10 +36,13 @@ export const routes: Routes = [
       { path: 'games', component: Games },
       { path: 'profile', component: Profile },
       { path: 'lecciones', component: Lecciones },
-      { path: 'contribuir', component:ContribuirComponent  },
+      { path: 'contribuir', component: ContribuirComponent },
       { path: 'biblioteca', component: Biblioteca },
-      { path: 'moderation', component: Moderation },
-    ]
-  }
+      { path: 'moderation', component: Moderation, canActivate: [adminGuard] },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'auth/login',
+  },
 ];
-
