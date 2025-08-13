@@ -2,22 +2,24 @@
   <h1 class="text-5xl font-extrabold bg-gradient-to-r from-amber-800 via-orange-700 to-amber-900 bg-clip-text text-transparent mb-4 drop-shadow-sm">Diccionario Audiovisual Shuar</h1>
   <p class="text-xl text-gray-700 mb-12 font-medium tracking-wide">Explora la riqueza del idioma Shuar con pronunciación, ejemplos y contexto cultural.</p>
 
-  <div class="flex justify-center items-center space-x-8 mb-12 w-full max-w-2xl">
-    <div class="flex items-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-4 border border-orange-100/50 transform transition-all duration-300 hover:scale-105">
-      <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-lg mr-3">
-        <i class="fas fa-book-open text-2xl text-white"></i>
-      </div>
-      <span class="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">{{ filteredWords.length }}+</span>
-      <span class="text-lg text-gray-600 ml-2 font-medium">palabras</span>
+  <div class="flex flex-wrap justify-center items-center gap-6 mb-12 w-full max-w-2xl">
+  <div class="flex items-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-4 border border-orange-100/50 transform transition-all duration-300 hover:scale-105 w-full sm:w-auto">
+    <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-2 rounded-lg mr-3">
+      <i class="fas fa-book-open text-2xl text-white"></i>
     </div>
-    <div class="flex items-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-4 border border-orange-100/50 transform transition-all duration-300 hover:scale-105">
-      <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-2 rounded-lg mr-3">
-        <i class="fas fa-wifi text-2xl text-white"></i>
-      </div>
-      <span class="text-lg font-bold text-emerald-700">Disponible</span>
-      <span class="text-lg text-gray-600 ml-2 font-medium">Offline</span>
-    </div>
+    <span class="text-3xl font-bold bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">{{ filteredWords.length }}+</span>
+    <span class="text-lg text-gray-600 ml-2 font-medium">palabras</span>
   </div>
+
+  <div class="flex items-center bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-4 border border-orange-100/50 transform transition-all duration-300 hover:scale-105 w-full sm:w-auto">
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-2 rounded-lg mr-3">
+      <i class="fas fa-wifi text-2xl text-white"></i>
+    </div>
+    <span class="text-lg font-bold text-emerald-700">Disponible</span>
+    <span class="text-lg text-gray-600 ml-2 font-medium">Offline</span>
+  </div>
+</div>
+
 
   <div class="w-full max-w-4xl mb-8">
     <!-- Barra de Búsqueda de Palabra -->

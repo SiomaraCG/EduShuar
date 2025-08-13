@@ -14,32 +14,86 @@
   </header>
 
   <!-- Estadísticas -->
-  <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-12 border border-orange-100/50 relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-r from-orange-50/30 to-amber-50/30"></div>
-    <div class="relative">
-      <div class="flex justify-center items-center space-x-12 w-full max-w-4xl mx-auto">
-        <div class="group flex items-center bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl shadow-lg px-8 py-6 border border-amber-200 hover:shadow-amber-200 transition-all duration-300 hover:scale-105">
-          <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-3 rounded-xl mr-4 shadow-lg group-hover:shadow-amber-200 transition-shadow duration-300">
-            <i class="fas fa-folder-open text-2xl text-white"></i>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-4xl font-extrabold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">{{ filteredContent.length }}</span>
-            <span class="text-lg text-gray-600 font-medium">contenidos</span>
-          </div>
+<section class="bg-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-xl p-4 sm:p-6 md:p-8 mb-8 md:mb-12 border border-orange-100/50 relative overflow-hidden mx-4 lg:mx-0">
+  <div class="absolute inset-0 bg-gradient-to-r from-orange-50/30 to-amber-50/30"></div>
+  
+  <!-- Elementos decorativos para pantallas grandes -->
+  <div class="absolute top-0 right-0 w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-amber-200/10 to-orange-200/10 rounded-full blur-2xl hidden md:block"></div>
+  <div class="absolute bottom-0 left-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-tr from-orange-200/10 to-amber-200/10 rounded-full blur-xl hidden md:block"></div>
+  
+  <div class="relative">
+    <!-- Layout responsivo: columna en móvil, fila en desktop -->
+    <div class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 w-full max-w-5xl mx-auto">
+      
+      <!-- Tarjeta de Contenidos -->
+      <div class="group w-full sm:flex-1 max-w-sm flex items-center bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-amber-200 hover:shadow-amber-200 transition-all duration-300 hover:scale-105 transform">
+        
+        <!-- Icono -->
+        <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-2 sm:p-3 md:p-3 rounded-lg md:rounded-xl mr-3 md:mr-4 shadow-lg group-hover:shadow-amber-200 transition-shadow duration-300 flex-shrink-0">
+          <i class="fas fa-folder-open text-lg sm:text-xl md:text-2xl text-white"></i>
         </div>
+        
+        <!-- Contenido -->
+        <div class="flex flex-col min-w-0 flex-1">
+          <span class="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent leading-tight">
+            {{ filteredContent.length }}
+          </span>
+          <span class="text-sm sm:text-base md:text-lg text-gray-600 font-medium">
+            <span class="hidden sm:inline">contenidos</span>
+            <span class="sm:hidden">items</span>
+          </span>
+        </div>
+        
+        <!-- Indicador visual adicional para móvil -->
+        <div class="ml-2 sm:hidden">
+          <div class="w-2 h-8 bg-gradient-to-b from-amber-400 to-orange-400 rounded-full"></div>
+        </div>
+      </div>
 
-        <div class="group flex items-center bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl shadow-lg px-8 py-6 border border-emerald-200 hover:shadow-emerald-200 transition-all duration-300 hover:scale-105">
-          <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-3 rounded-xl mr-4 shadow-lg group-hover:shadow-emerald-200 transition-shadow duration-300">
-            <i class="fas fa-eye text-2xl text-white"></i>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-4xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">{{ totalViews }}</span>
-            <span class="text-lg text-gray-600 font-medium">visualizaciones</span>
-          </div>
+      <!-- Separador visual para desktop -->
+      <div class="hidden lg:block w-px h-16 bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+      
+      <!-- Separador para móvil -->
+      <div class="sm:hidden w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+
+      <!-- Tarjeta de Visualizaciones -->
+      <div class="group w-full sm:flex-1 max-w-sm flex items-center bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl md:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 border border-emerald-200 hover:shadow-emerald-200 transition-all duration-300 hover:scale-105 transform">
+        
+        <!-- Icono -->
+        <div class="bg-gradient-to-r from-emerald-500 to-teal-500 p-2 sm:p-3 md:p-3 rounded-lg md:rounded-xl mr-3 md:mr-4 shadow-lg group-hover:shadow-emerald-200 transition-shadow duration-300 flex-shrink-0">
+          <i class="fas fa-eye text-lg sm:text-xl md:text-2xl text-white"></i>
+        </div>
+        
+        <!-- Contenido -->
+        <div class="flex flex-col min-w-0 flex-1">
+          <span class="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent leading-tight">
+            {{ totalViews }}
+          </span>
+          <span class="text-sm sm:text-base md:text-lg text-gray-600 font-medium">
+            <span class="hidden sm:inline">visualizaciones</span>
+            <span class="sm:hidden">vistas</span>
+          </span>
+        </div>
+        
+        <!-- Indicador visual adicional para móvil -->
+        <div class="ml-2 sm:hidden">
+          <div class="w-2 h-8 bg-gradient-to-b from-emerald-400 to-teal-400 rounded-full"></div>
         </div>
       </div>
     </div>
-  </section>
+
+    <!-- Información adicional responsive -->
+    <div class="mt-6 md:mt-8 text-center">
+      <div class="inline-flex items-center gap-2 md:gap-3 bg-white/80 backdrop-blur-sm px-3 md:px-4 py-2 md:py-3 rounded-xl border border-gray-200 shadow-sm">
+        <i class="fas fa-info-circle text-blue-500 text-sm md:text-base"></i>
+        <span class="text-xs md:text-sm text-gray-600 font-medium">
+          <span class="hidden sm:inline">Estadísticas actualizadas en tiempo real</span>
+          <span class="sm:hidden">Datos en tiempo real</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
 
   <!-- Búsqueda y filtros -->
   <section class="bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-8 mb-12 border border-orange-100/50 relative overflow-hidden">
