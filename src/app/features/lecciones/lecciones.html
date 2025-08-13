@@ -13,6 +13,7 @@
     </div>
   </header>
 
+  @if (lecciones$ | async; as lecciones) {
   <!-- Tarjetas de estadísticas principales -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto mb-16">
     <!-- Tarjeta 1: Puntos Totales -->
@@ -40,7 +41,7 @@
           </div>
         </div>
         <h3 class="text-2xl font-bold text-gray-800 text-center mb-4 group-hover:text-emerald-700 transition-colors duration-300">Lecciones Completadas</h3>
-        <p class="text-5xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent text-center mb-2">{{ stats().completedGames }}/{{ totalLessons }}</p>
+        <p class="text-5xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent text-center mb-2">{{ stats().completedGames }}/{{ lecciones.length }}</p>
         <p class="text-lg text-gray-600 text-center">lecciones tomadas</p>
       </div>
     </div>
@@ -81,7 +82,7 @@
   <!-- Grid de Lecciones -->
   <div class="flex justify-center">
     <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-7xl">
-      @for (lesson of lessons; track lesson.id) {
+      @for (lesson of lecciones; track lesson.id) {
         <div class="group bg-white/95 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 border border-orange-100/50 relative">
           
           <!-- Efectos de fondo -->
@@ -118,6 +119,11 @@
       }
     </main>
   </div>
+} @else {
+  <div class="text-center">
+    <p>Cargando lecciones...</p>
+  </div>
+}
 
   <!-- Modal iframe -->
   @if (showIframeModal && selectedLesson) {

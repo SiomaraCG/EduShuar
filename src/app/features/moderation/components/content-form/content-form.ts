@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-content-form',
@@ -10,6 +11,7 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
   styleUrls: ['./content-form.scss']
 })
 export class ContentForm {
+  private firestore: Firestore = inject(Firestore);
   contentForm: FormGroup;
 
   constructor() {
@@ -24,10 +26,14 @@ export class ContentForm {
 
   onSubmitContent(): void {
     if (this.contentForm.valid) {
-      console.log(this.contentForm.value);
-      // Here you would typically send the data to a service
-      alert('Contenido guardado exitosamente (simulado).');
-      this.contentForm.reset();
+      const gamesAndLessonsCollection = collection(this.firestore, 'games_and_lessons');
+      addDoc(gamesAndLessonsCollection, this.contentForm.value).then(() => {
+        alert('Contenido guardado exitosamente.');
+        this.contentForm.reset();
+      }).catch(error => {
+        console.error('Error guardando el contenido:', error);
+        alert('Hubo un error al guardar el contenido.');
+      });
     } else {
       alert('Por favor, completa todos los campos.');
     }

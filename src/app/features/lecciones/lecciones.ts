@@ -1,14 +1,16 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Firestore, collection, query, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, collectionData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
-export interface Lesson {
+export interface GameAndLesson {
   id: string;
   name: string;
-  url: string;
   description: string;
+  link: string;
+  difficulty: string;
+  category: string;
 }
 
 export interface UserStats {
@@ -20,7 +22,7 @@ export interface UserStats {
 @Component({
   selector: 'app-lecciones',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './lecciones.html',
   styleUrl: './lecciones.scss'
 })
@@ -28,7 +30,7 @@ export class Lecciones implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private firestore: Firestore = inject(Firestore);
 
-  selectedLesson: Lesson | null = null;
+  selectedLesson: GameAndLesson | null = null;
   selectedLessonUrl: SafeResourceUrl | null = null;
   showIframeModal = false;
 
@@ -38,26 +40,13 @@ export class Lecciones implements OnInit {
     achievements: []
   });
 
-  lessons: Lesson[] = [
-    {
-      id: 'game1',
-      name: 'Juego de Memoria',
-      url: 'https://wayground.com/join?gc=24186172',
-      description: 'Un juego clásico de memoria para entrenar tu mente.',
-    },
-    {
-      id: 'game2',
-      name: 'Ahorcado de Palabras',
-      url: 'https://wayground.com/join?gc=24186172',
-      description: 'Adivina la palabra oculta antes de que se agoten tus intentos.',
-    },
-    {
-      id: 'game3',
-      name: 'Quiz de Cultura Shuar',
-      url: 'https://wayground.com/join?gc=24186172',
-      description: 'Pon a prueba tus conocimientos sobre la cultura Shuar.',
-    },
-  ];
+  lecciones$: Observable<GameAndLesson[]>;
+
+  constructor() {
+    const leccionesCollection = collection(this.firestore, 'games_and_lessons');
+    const leccionesQuery = query(leccionesCollection, where('category', '==', 'leccion'));
+    this.lecciones$ = collectionData(leccionesQuery, { idField: 'id' }) as Observable<GameAndLesson[]>;
+  }
 
   ngOnInit(): void {
     this.fetchUserStats();
@@ -85,13 +74,9 @@ export class Lecciones implements OnInit {
     });
   }
 
-  get totalLessons(): number {
-    return this.lessons.length;
-  }
-
-  selectLesson(lesson: Lesson): void {
+  selectLesson(lesson: GameAndLesson): void {
     this.selectedLesson = lesson;
-    this.selectedLessonUrl = this.sanitizer.bypassSecurityTrustResourceUrl(lesson.url);
+    this.selectedLessonUrl = this.sanitizer.bypassSecurityTrustResourceUrl(lesson.link);
     this.showIframeModal = true;
   }
 

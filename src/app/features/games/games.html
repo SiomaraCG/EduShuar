@@ -13,6 +13,7 @@
     </div>
   </header>
 
+  @if (games$ | async; as games) {
   <!-- Tarjetas de estadísticas principales -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto mb-16">
     <!-- Tarjeta 1: Puntos Totales -->
@@ -40,7 +41,7 @@
           </div>
         </div>
         <h3 class="text-2xl font-bold text-gray-800 text-center mb-4 group-hover:text-emerald-700 transition-colors duration-300">Juegos Completados</h3>
-        <p class="text-5xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent text-center mb-2">{{ stats().completedGames }}/{{ totalGames }}</p>
+        <p class="text-5xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent text-center mb-2">{{ stats().completedGames }}/{{ games.length }}</p>
         <p class="text-lg text-gray-600 text-center">juegos jugados</p>
       </div>
     </div>
@@ -118,6 +119,12 @@
       }
     </main>
   </div>
+} @else {
+  <!-- Loading spinner or placeholder -->
+  <div class="text-center">
+    <p>Cargando juegos...</p>
+  </div>
+}
 
   <!-- Modal iframe -->
   @if (showIframeModal && selectedGame) {
