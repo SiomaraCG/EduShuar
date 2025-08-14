@@ -1,5 +1,5 @@
 {
-  "name": "prueba-proyecto",
+  "name": "prueba_proyecto",
   "version": "0.0.0",
   "scripts": {
     "prestart": "node set-env.js",
