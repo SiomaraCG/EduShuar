@@ -35,8 +35,13 @@ export class Moderation implements OnInit {
 
   private contributions$: Observable<Contribution[]>;
   contributions: WritableSignal<Contribution[]> = signal([]);
+  gamesAndLessons: WritableSignal<any[]> = signal([]);
+  dictionaryEntries: WritableSignal<any[]> = signal([]);
+
   searchTerm: WritableSignal<string> = signal('');
   statusFilter: WritableSignal<StatusFilter> = signal('all');
+  activeTab: WritableSignal<'contributions' | 'games_and_lessons' | 'dictionary'> = signal('contributions');
+
   selectedFileUrl: WritableSignal<SafeResourceUrl | null> = signal(null);
   isModalOpen: WritableSignal<boolean> = signal(false);
   youtubeVideoId: WritableSignal<string | null> = signal(null);
@@ -79,6 +84,62 @@ export class Moderation implements OnInit {
     this.contributions$.subscribe(data => {
       this.contributions.set(data);
     });
+
+    // Fetch games_and_lessons
+    const gamesAndLessonsCollection = collection(this.firestore, 'games_and_lessons');
+    collectionData(gamesAndLessonsCollection, { idField: 'id' }).subscribe(data => {
+      this.gamesAndLessons.set(data);
+    });
+
+    // Fetch dictionary
+    const dictionaryCollection = collection(this.firestore, 'dictionary');
+    collectionData(dictionaryCollection, { idField: 'id' }).subscribe(data => {
+      this.dictionaryEntries.set(data);
+    });
+  }
+
+  setActiveTab(tab: 'contributions' | 'games_and_lessons' | 'dictionary') {
+    this.activeTab.set(tab);
+  }
+
+  async updateGameOrLesson(id: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, 'games_and_lessons', id);
+    try {
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error('Error updating game or lesson:', error);
+    }
+  }
+
+  async deleteGameOrLesson(id: string): Promise<void> {
+    if (confirm('¿Estás seguro de que quieres eliminar este juego/lección permanentemente?')) {
+      const docRef = doc(this.firestore, 'games_and_lessons', id);
+      try {
+        await deleteDoc(docRef);
+      } catch (error) {
+        console.error('Error deleting game or lesson:', error);
+      }
+    }
+  }
+
+  async updateDictionaryEntry(id: string, data: any): Promise<void> {
+    const docRef = doc(this.firestore, 'dictionary', id);
+    try {
+      await updateDoc(docRef, data);
+    } catch (error) {
+      console.error('Error updating dictionary entry:', error);
+    }
+  }
+
+  async deleteDictionaryEntry(id: string): Promise<void> {
+    if (confirm('¿Estás seguro de que quieres eliminar esta entrada del diccionario permanentemente?')) {
+      const docRef = doc(this.firestore, 'dictionary', id);
+      try {
+        await deleteDoc(docRef);
+      } catch (error) {
+        console.error('Error deleting dictionary entry:', error);
+      }
+    }
   }
 
   openFormModal(formType: FormType): void {

@@ -54,7 +54,6 @@ export class Stories implements OnInit {
         description: item['description'],
         category: item['category'],
         author: item['contributor'],
-        fileUrl: item['fileUrl'] || item['imageUrl'] || '',
         type: item['contentType'] || 'text',
         views: item['viewCount'] || 0,
         isCompleted: false, // Initialize as not completed
