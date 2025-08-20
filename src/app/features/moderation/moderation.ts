@@ -63,6 +63,10 @@ export class Moderation implements OnInit {
       );
     }
 
+    if (filter !== 'all') {
+      filtered = filtered.filter(c => c.moderation.status === filter);
+    }
+
     return filtered;
   });
 
