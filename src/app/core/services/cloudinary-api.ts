@@ -40,8 +40,12 @@ export class CloudinaryApi {
           return { progress };
         }
         if (event.type === HttpEventType.Response) {
-          const responseBody = event.body as { secure_url: string };
-          return { progress: 100, url: responseBody.secure_url };
+          const body: any = event.body;
+          const url = body?.secure_url || body?.url || null; // soporta diferentes formatos
+          if (!url) {
+            console.error('Cloudinary response body did not contain a valid URL:', body);
+          }
+          return { progress: 100, url };
         }
         return { progress: 0 }; // Para otros tipos de eventos
       }),
