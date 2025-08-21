@@ -25,6 +25,11 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'stories',
+    component: MainLayout,
+    children: [{ path: '', component: Stories }],
+  },
+  {
     path: '',
     component: MainLayout,
     canActivate: [authGuard],
@@ -32,7 +37,6 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: Dashboard },
       { path: 'dictionary', component: Dictionary },
-      { path: 'stories', component: Stories },
       { path: 'games', component: Games },
       { path: 'profile', component: Profile },
       { path: 'lecciones', component: Lecciones },
@@ -43,6 +47,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'auth/login',
+    redirectTo: 'stories',
   },
 ];

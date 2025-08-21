@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { FormsModule } from '@angular/forms'; // For filters
+import { HttpClient, HttpClientModule } from '@angular/common/http'; // Import HttpClient
 
 export interface Story {
   id: string;
@@ -22,7 +23,7 @@ export interface Story {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, YouTubePlayerModule, FormsModule],
+  imports: [CommonModule, YouTubePlayerModule, FormsModule, HttpClientModule], // Add HttpClientModule
   selector: 'app-stories',
   templateUrl: './stories.html',
   styleUrls: ['./stories.scss']
@@ -30,6 +31,7 @@ export interface Story {
 export class Stories implements OnInit {
   private firestore: Firestore = inject(Firestore);
   private sanitizer: DomSanitizer = inject(DomSanitizer);
+  private http: HttpClient = inject(HttpClient); // Inject HttpClient
 
   historiaOralStories: WritableSignal<Story[]> = signal([]);
   filteredStories: WritableSignal<Story[]> = signal([]); // For filtered content
@@ -37,6 +39,9 @@ export class Stories implements OnInit {
 
   selectedContent: Story | null = null;
   selectedContentUrl: SafeResourceUrl | null = null;
+  selectedTextContent: string | null = null;
+  selectedVideoUrl: SafeResourceUrl | null = null; // New property for video URL
+  selectedAudioUrl: SafeResourceUrl | null = null; // New property for audio URL
   youtubeVideoId: string | null = null;
   showIframeModal: boolean = false;
 
@@ -46,6 +51,8 @@ export class Stories implements OnInit {
                   where('moderation.status', '==', 'approved'),
                   where('category', '==', 'history'));
 
+    console.log('Firestore query for stories:', q); // Added log
+
     const stories$ = collectionData(q, { idField: 'id' }).pipe(
       map(items => items.map(item => ({
         id: item['id'],
@@ -54,6 +61,7 @@ export class Stories implements OnInit {
         description: item['description'],
         category: item['category'],
         author: item['contributor'],
+        fileUrl: item['fileUrl'],
         type: item['contentType'] || 'text',
         views: item['viewCount'] || 0,
         isCompleted: false, // Initialize as not completed
@@ -61,6 +69,7 @@ export class Stories implements OnInit {
     );
 
     stories$.subscribe(data => {
+      console.log('Data received from Firestore:', data); // Added log
       this.historiaOralStories.set(data);
       this.loadProgressFromLocalStorage(); // Load progress after stories are set
       this.filterStories(); // Apply initial filter
@@ -73,20 +82,56 @@ export class Stories implements OnInit {
 
   // --- Content Display Logic (from Biblioteca) ---
   openContent(item: Story): void {
+    console.log('openContent called for item:', item);
     this.selectedContent = item;
-    this.youtubeVideoId = this.getYouTubeVideoId(item.fileUrl);
+    this.youtubeVideoId = null;
+    this.selectedContentUrl = null;
+    this.selectedTextContent = null;
 
-    if (item.type === 'video' && this.youtubeVideoId) {
-      this.showIframeModal = true;
-    } else if (item.type === 'video' || item.type === 'audio' || item.type === 'image' || item.type === 'document') {
+    if (!item.fileUrl) {
+      console.error('No fileUrl provided for this content.');
+      return;
+    }
+
+    // Handle YouTube videos
+    if (item.type === 'video') {
+      const videoId = this.getYouTubeVideoId(item.fileUrl);
+      if (videoId) {
+        this.youtubeVideoId = videoId;
+        this.showIframeModal = true;
+        return;
+      }
+    }
+
+    // Handle other video, audio, and image types directly in iframe
+    if (item.type === 'video' || item.type === 'audio' || item.type === 'image') {
       this.selectedContentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(item.fileUrl);
       this.showIframeModal = true;
-    } else {
+    }
+    // Handle text and documents
+    else if (item.type === 'text' || item.type === 'document') {
+      this.http.get(item.fileUrl, { responseType: 'text' }).subscribe({
+        next: (data) => {
+          this.selectedTextContent = data;
+          this.showIframeModal = true;
+        },
+        error: (err) => {
+          console.error('Error fetching text content:', err);
+          // Fallback to iframe for documents like PDFs that might not be text
+          this.selectedContentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(item.fileUrl);
+          this.showIframeModal = true;
+        }
+      });
+    }
+    // Fallback for any other case
+    else {
+      console.log('Opening content in new tab:', item.fileUrl);
       window.open(item.fileUrl, '_blank');
     }
   }
 
   closeIframeModal(): void {
+    console.log('closeIframeModal called. showIframeModal before closing:', this.showIframeModal); // New log
     // Mark content as completed when modal is closed
     if (this.selectedContent) {
       const currentStories = this.historiaOralStories();
@@ -101,7 +146,9 @@ export class Stories implements OnInit {
     this.showIframeModal = false;
     this.selectedContent = null;
     this.selectedContentUrl = null;
+    this.selectedTextContent = null; // Reset text content
     this.youtubeVideoId = null;
+    console.log('showIframeModal after closing:', this.showIframeModal); // New log
   }
 
   getYouTubeVideoId(url: string): string | null {
@@ -136,12 +183,13 @@ export class Stories implements OnInit {
   }
 
   filterStories(): void {
-    this.filteredStories.set(
-      this.historiaOralStories().filter(story => {
-        const matchesContentType = this.selectedContentType === 'all' || story.type === this.selectedContentType;
-        return matchesContentType;
-      })
-    );
+    const filtered = this.historiaOralStories().filter(story => {
+      const matchesContentType = this.selectedContentType === 'all' || story.type === this.selectedContentType;
+      return matchesContentType;
+    });
+    console.log('historiaOralStories after filter:', this.historiaOralStories()); // Added log
+    console.log('Filtered stories:', filtered); // Added log
+    this.filteredStories.set(filtered);
   }
 
   // --- Progress Tracking (for YouTube videos) ---

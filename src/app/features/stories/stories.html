@@ -152,7 +152,7 @@
         <div class="p-6 h-full flex flex-col">
           <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ selectedContent?.title }}</h2>
           <div class="flex-grow flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
-            @if (selectedContent?.type === 'video' && youtubeVideoId) {
+            @if (youtubeVideoId) {
               <youtube-player
                 [videoId]="youtubeVideoId"
                 [height]="480"
@@ -161,8 +161,9 @@
                 (stateChange)="onPlayerStateChange($event)"
                 class="w-full h-full"
               ></youtube-player>
-            }
-            @if (selectedContent?.type !== 'video' && selectedContentUrl) {
+            } @else if (selectedTextContent) {
+              <div [innerHTML]="selectedTextContent" class="p-4 overflow-auto w-full h-full"></div>
+            } @else if (selectedContentUrl) {
               <iframe
                 [src]="selectedContentUrl"
                 frameborder="0"
